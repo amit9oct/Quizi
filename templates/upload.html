@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+{% block content %}
+    <div id="exam_list" class="text-center center-block">
+        <span class="row"></span>
+        <div class="row">
+            {% for quiz in all_quiz %}
+                <a href="/load_quiz/?quiz_name={{quiz.name}}" class="add_exam">
+                    <div class="panel panel-default col-sm-2 col-sm-offset-5">
+                        <div class="panel-body">
+                            <p> {{quiz.name}} </p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+            {% ifequal request.session.user_type "Uploader" %}
+            <a href="/add_quiz_home/">
+                <div class="panel panel-default col-sm-2 col-sm-offset-5">
+                    <div class="panel-body">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </div>
+                </div>
+            </a>
+            {% endifequal %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,206 @@
+{% extends 'index.html' %}
+{% block extrajs %}
+<script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<script>
+$(document).ready(function(){
+    MathJax.Hub.Config({
+      tex2jax: {
+             inlineMath: [ ['$','$'], ['\\(','\\)'] ]
+      }
+    });
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+});
+function preview(id){
+    var allText = document.getElementById("id_description_"+id).value;
+    var ele1 = document.getElementById("id_preview_"+id);
+    ele1.innerHTML = allText;
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+}
+function submit(question_pk,student_id,quiz_name) {
+    var answer = Number($('input[name=options]:checked', '#id_question_'+question_pk).val());
+   $.post("/submit_answer/",
+       {
+           question_pk : question_pk,
+           user_id : student_id,
+           answer : answer,
+           quiz_name : quiz_name,
+           csrfmiddlewaretoken :document.forms["id_question_"+question_pk]["csrfmiddlewaretoken"].value
+       },
+       function(data,status)
+       {
+           alert(data);
+       }
+   );
+
+}
+</script>
+{% endblock %}
+{% block content %}
+<br>
+<div class="row">
+    <div class="col-sm-3">
+        <a href="/load_quiz/?subject_to_list=All&quiz_name={{quiz_name}}">
+            <button type="button" class="btn btn-primary custom-button-width">All</button>
+        </a>
+    </div>
+   {% for subject in subjects %}
+        <div class="col-sm-3">
+            <a href="/load_quiz/?subject_to_list={{subject}}&quiz_name={{quiz_name}}">
+                <button type="button" class="btn btn-primary custom-button-width">{{subject}}</button>
+            </a>
+        </div>
+   {% endfor %}
+</div>
+
+<div class="row">
+    {% for question in questions %}
+    {% ifequal request.session.user_type "Uploader" %}
+        <form action="/update_question/" id="id_question_{{question.pk}}" name="id_question_{{question.pk}}" method="POST">
+    {% else %}
+        <form action="/update_question/" id="id_question_{{question.question.pk}}" name="id_question_{{question.question.pk}}" method="POST">
+    {% endifequal %}
+        {% csrf_token %}
+        <div class="row" id="question-display">
+        <span class="row"></span>
+			<div class="panel panel-default col-sm-8 col-sm-offset-2">
+				<div class="panel-heading h4 question-place">
+                    {% ifequal request.session.user_type "Uploader" %}
+                        <textarea name="description" id="id_description_{{question.pk}}" class="form-control" rows="5" placeholder="Question" onkeyup="preview('{{question.pk}}')" onchange="preview()">{{question.description}}</textarea>
+                        <p id="id_preview_{{question.pk}}">{{question.description | safe}}</p>
+                    {% else %}
+                        <p class="text-left">{{question.question.description | safe}}</p>
+                    {% endifequal %}
+				</div>
+				<div class="panel-body">
+					<ul class="list-group">
+						<a  class="select-option">
+                            <li class="list-group-item h5">
+                                <span class="col-sm-offset-2 option option1-place">
+                                    {% ifequal request.session.user_type "Uploader" %}
+                                        <input type="text" placeholder="1" class="form-control"  name="option1" value="{{question.options.option1}}"/>
+                                    {% else %}
+                                        <input type="radio" name="options" value="1" {{question.answer.option1}}/> {{question.question.options.option1}} <br />
+                                    {% endifequal %}
+                                </span>
+                            </li>
+                        </a>
+						<a  class="select-option">
+                            <li class="list-group-item h5">
+                                <span class="col-sm-offset-2 option option1-place">
+                                    {% ifequal request.session.user_type "Uploader" %}
+                                        <input type="text" placeholder="2" class="form-control"  name="option2" value="{{question.options.option2}}"/>
+                                    {% else %}
+                                        <input type="radio" name="options" value="2" {{question.answer.option2}} /> {{question.question.options.option2}} <br />
+                                    {% endifequal %}
+                                </span>
+                            </li>
+                        </a>
+						<a  class="select-option">
+                            <li class="list-group-item h5">
+                                <span class="col-sm-offset-2 option option1-place">
+                                    {% ifequal request.session.user_type "Uploader" %}
+                                        <input type="text" placeholder="3" class="form-control"  name="option3" value="{{question.options.option3}}"/>
+                                    {% else %}
+                                        <input type="radio" name="options" value="3" {{question.answer.option3}} /> {{question.question.options.option3}} <br />
+                                    {% endifequal %}
+                                </span>
+                            </li>
+                        </a>
+						<a  class="select-option">
+                            <li class="list-group-item h5">
+                                <span class="col-sm-offset-2 option option1-place">
+                                    {% ifequal request.session.user_type "Uploader" %}
+                                        <input type="text" placeholder="4" class="form-control"  name="option4" value="{{question.options.option4}}"/>
+                                    {% else %}
+                                        <input type="radio" name="options" value="4" {{question.answer.option4}} /> {{question.question.options.option4}} <br />
+                                    {% endifequal %}
+                                </span>
+                            </li>
+                        </a>
+						<a  class="select-option">
+                            <li class="list-group-item h5">
+                                <span class="col-sm-offset-2 option option1-place">
+                                    {% ifequal request.session.user_type "Uploader" %}
+                                        <input type="text" placeholder="5" class="form-control"  name="option5" value="{{question.options.option5}}"/>
+                                    {% else %}
+                                        <input type="radio" name="options" value="5" {{question.answer.option5}}/> {{question.question.options.option5}} <br />
+                                    {% endifequal %}
+                                </span>
+                            </li>
+                        </a>
+                        {% ifequal request.session.user_type "Uploader" %}
+                            <a  class="select-option">
+                                <li class="list-group-item h5">
+                                    <span class="col-sm-offset-2 option option1-place">
+                                        <label>Answer option number 1 .. 5</label>
+                                        <input type="text" class="form-control" name="answer" id="option-answer" placeholder="Answer option number 1 .. 5" value="{{question.options.answer}}"/>
+                                    </span>
+                                </li>
+                            </a>
+                            <a  class="select-option">
+                                <li class="list-group-item h5">
+                                    <span class="col-sm-offset-2 option option1-place">
+                                        <label>"Enter a positive score for question"</label>
+                                        <input type="text" class="form-control" name="score" placeholder="Enter a positive score for question" value="{{question.score}}">
+                                    </span>
+                                </li>
+                            </a>
+                            <a  class="select-option">
+                                <li class="list-group-item h5">
+                                    <span class="col-sm-offset-2 option option1-place">
+                                        <label>"Enter a negative or zero penalty"</label>
+                                        <input type="text" class="form-control" name="penalty" placeholder="Enter a negative or zero penalty" value="{{question.penalty}}">
+                                    </span>
+                                </li>
+                            </a>
+                            {% for subject in subjects %}
+                                <a  class="select-option">
+                                    <li class="list-group-item h7">
+                                        <span class="col-sm-offset-2 option option1-place">
+                                            <input type="radio" class="form-control" name="subject" value="{{subject}}"> {{subject}}
+                                        </span>
+                                    </li>
+                                </a>
+                            {% endfor %}
+                             <label>Current subject tag of this question is {{question.subject}}</label>
+                             <input type="hidden" name="quiz_name" value="{{quiz_name}}">
+                        {% else %}
+                            <p>*Click Submit to Save the answer!</p>
+                        {% endifequal %}
+					</ul>
+                    {% ifequal request.session.user_type "Uploader" %}
+                        <input type="hidden" id="id_question" name="question_id" value="{{question.pk}}">
+                        <input type="hidden" name="question_pk" value="{{question.pk}}">
+                    {% else %}
+                        <input type="hidden" id="id_question" name="question_id" value="{{question.question.pk}}">
+                        <input type="hidden" name="question_pk" value="{{question.question.pk}}">
+                    {% endifequal %}
+                    {% ifequal request.session.user_type "Uploader" %}
+                        <button class="btn btn-default" id="verify">
+                            <p>Page reloads once a question is added/modified</p>
+                            <input type="submit" value="Add/Modify Question">
+                        </button>
+                    {% endifequal %}
+				</div>
+			</div>
+		</div>
+    </form>
+    {% ifequal request.session.user_type "Student" %}
+        <button class="btn btn-default" id="verify">
+             <span class="glyphicon glyphicon-ok-circle after-ok" onclick='submit("{{question.question.pk}}","{{request.session.user_id}}","{{quiz_name}}")'>Submit</span>
+        </button>
+    {% endifequal %}
+    {% endfor %}
+    {% ifnotequal request.session.user_type "Uploader" %}
+        <form action="/complete_test/" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="{{request.session.user_id}}">
+            <input type="hidden" name="quiz_name" value="{{quiz_name}}">
+            <input type="submit" value="Complete Test!">
+        </form>
+    {% endifnotequal %}
+</div>
+
+{% endblock %}

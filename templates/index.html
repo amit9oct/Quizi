@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{{title}}{% endblock %}</title>
+    {% load staticfiles %}
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" />
+    <script src="{% static 'js/jquery.min.js'%}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/validate.js' %}"></script>
+    {% block extrajs %} {% endblock %}
+</head>
+<body>
+<nav style="background-color: #2e6da4">
+    <div class="row">
+        <span class="logo navbar-brand pull-left">
+            IPEC IIT
+        </span>
+        <span class="pull-right">
+            {% if request.session.user_id %}
+            <span class="username">Hi {{ request.session.user_type }} <b>{{ request.session.user_id }}</b></span>
+                <a href="/logout/"><span class="logout">Logout</span></a>
+            {% else %}
+                <form id="id_login_form" class="form-inline" name="login-form" action="/login/" method="POST">
+                    {% csrf_token %}
+                    <input class="form-control" type="text" name="user_id" placeholder="User Id"/>
+                    <input class="form-control" type="password" name="password" placeholder="Password"/>
+                    <input type="radio" name="user_type" value="Uploader" /> Uploader
+                    <input type="radio" name="user_type" value="Student" /> Student
+                    <input class="btn btn-primary" type="submit" name="log_in">
+                </form>
+            {% endif %}
+        </span>
+    </div>
+</nav>
+<div id="bottom">
+{% block message %}
+    {% if message%}
+        <span id="error_id">*{{message}}*</span>
+    {% endif %}
+{% endblock %}
+{% block content %} {% endblock %}
+</div>
+</body>
+</html>

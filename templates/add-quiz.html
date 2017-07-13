@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+{% block content %}
+        <div class="container" id="show-exam-form">
+            <div class="panel panel-default col-sm-6 col-sm-offset-3">
+                <div class="panel-body">
+                    <form class="form-group" style="text-align:center;" name="quiz-form" id="quiz-form" action="/add_quiz/" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" class="form-control col-sm-6" name="quiz_name" placeholder="Quiz Name"/>
+                            {% for subject in subjects %}
+                            <span class="form-control col-sm-6">
+                                 <input type="checkbox"  name="subjects" value="{{subject}}" /> {{subject}}
+                            </span>
+                            {% endfor %}
+                            <input type="text" class="form-control col-sm-6" name="num_ques" placeholder="Number Of Questions"/>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-default" id="quiz-form-submit" type="submit">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+{% block content %}
+<div class="jumbotron text-center" id="score">
+    <p>Your Score is <span id="count">{{your_score}}</span> out of <span id="total">{{total_score}}</span></p>
+    {% for subject_score in subject_scores %}
+    <p>
+        Your Score in {{subject_score.subject}} is {{subject_score.score}} out of {{subject_score.total}}.
+    </p>
+    {% endfor %}
+</div>
+{% endblock %}
